@@ -76,8 +76,17 @@ qz_result = gather(data)
 wzz_result = gather2(data)
 ```
 
-
- 
+#read again
+```
+sta1 = pd.read_excel('qz.xlsx')
+sta2 = pd.read_excel('wzz.xlsx')
+```
+#计算感染值，就是无症状+确诊
+```
+sta3 = pd.concat([sta1,sta2])
+sta3 = sta3.groupby(sta3.place).sum().reset_index()
+sta3.to_excel('all.xlsx')
+```
  
  
  
