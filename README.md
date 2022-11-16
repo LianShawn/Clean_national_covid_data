@@ -87,9 +87,40 @@ sta3 = pd.concat([sta1,sta2])
 sta3 = sta3.groupby(sta3.place).sum().reset_index()
 sta3.to_excel('all.xlsx')
 ```
- 
- 
- 
- 
+
+#单纯看每天的数据
+```
+import pandas as pd
+import re
+data = pd.read_excel('covid.xlsx')
+data['qz'] = data['qz'].apply(lambda x:x.split('，'))
+data['wzz'] = data['wzz'].apply(lambda x:x.split('，'))
+
+def clean(data):
+    shuzi = []
+    place = []
+    num = len(data)
+    pattern = r'\d+'
+    pattern2 = r'[\u4e00-\u9fa5]+'
     
+    for i in range(0,num):
+        ii = re.findall(pattern,data[i])
+        shuzi.append(ii[0])
+        
+        iii = re.findall(pattern2,data[i])
+        place.append(iii[0])
+    
+    result = {
+        'place':place,
+        'num':shuzi
+    }
+    
+    result = pd.DataFrame(result)
+    return result
+    
+qz2 = clean(data['qz'][0])
+wzz2 = clean(data['wzz'][0])
+result_qz = pd.merge(qz2,wzz2,on='place',how = 'outer')
+result_qz = result_qz.fillna(0)
+```
     
