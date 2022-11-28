@@ -123,4 +123,51 @@ wzz2 = clean(data['wzz'][0])
 result_qz = pd.merge(qz2,wzz2,on='place',how = 'outer')
 result_qz = result_qz.fillna(0)
 ```
+#上海各区的数据
+```
+def count(shuzi):
+    #提取出区
+    num =[]
+    qu=[]
+    shuzi=shuzi.dropna()
+    for i in shuzi:
+        ii = i.split('，')
+        num.append(ii[0])
+        iii = ii[1].replace('居住于','')
+        qu.append(iii)
+    data_a={
+    'qu':qu,
+    'num':num
+    }
     
+    data_a=pd.DataFrame(data_a)
+    
+    #提取出数字
+    shuzi = []
+    for i in data_a['num']:
+        age = re.findall('\d+',i)
+        if len(age)==2:
+            bb = int(age[1])-int(age[0])+1
+            shuzi.append(bb)
+        else:
+            shuzi.append(1)
+    
+    data_a['shuzi']=shuzi
+    
+    data_b = {
+    'qu':data_a['qu'],
+    '4/28':data_a['shuzi']
+    }
+    
+    data_b=pd.DataFrame(data_b)
+    
+    data_c=data_b.groupby('qu')['4/28'].sum()
+    
+    data_c=pd.DataFrame(data_c)
+    return data_c
+
+que_1 = count(data3['q1'])
+wu_1 = count(data3['w1'])
+data_result = pd.merge(que_1,wu_1,on='qu',how='outer')
+data_result = data_result.fillna(0)
+```
